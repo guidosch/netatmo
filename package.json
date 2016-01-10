@@ -1,0 +1,26 @@
+{
+  "name": "netatmo",
+  "version": "1.0.0",
+  "description": "Access to my netamto via api",
+  "main": "netatmo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guidosch/netatmo.git"
+  },
+  "keywords": [
+    "netatmo"
+  ],
+  "author": "guido schnider",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guidosch/netatmo/issues"
+  },
+  "homepage": "https://github.com/guidosch/netatmo#readme",
+
+	"dependencies": {
+    "netatmo": "^1.3.0"
+  }
+}
