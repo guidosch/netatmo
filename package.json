@@ -21,6 +21,7 @@
   "homepage": "https://github.com/guidosch/netatmo#readme",
 
 	"dependencies": {
-    "netatmo": "^1.3.0"
+    "netatmo": "^1.3.0",
+    "dispatch": "^1.0.0"
   }
 }

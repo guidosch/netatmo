@@ -1,6 +1,8 @@
 var auth = require('./myNetatmoAuth.js');
 var netatmo = require('netatmo');
 var http = require('http');
+var dispatch = require('dispatch');
+
 const PORT = 8000;
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -64,7 +66,17 @@ function handleRequest(request, response) {
 }
 
 
-var server = http.createServer(handleRequest);
+var server = http.createServer(
+  dispatch({
+    '/netatmo': function(request, response){
+      handleRequest(request, response);
+    },
+    '/test': function(request, response){
+      response.writeHead(200, HEADERS);
+      response.end("{testNull: null,testNullString: 'null',overflow: -9999}");
+    },
+
+  }));
 
 server.listen(PORT, function() {
   console.log("Server listening on: http://localhost:%s", PORT);
