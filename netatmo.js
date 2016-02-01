@@ -2,6 +2,7 @@ var auth = require('./myNetatmoAuth.js');
 var netatmo = require('netatmo');
 var http = require('http');
 var dispatch = require('dispatch');
+var apistatus = require('./meteoDataAPIStatus.js');
 
 const PORT = 8000;
 const HEADERS = {
@@ -74,6 +75,10 @@ var server = http.createServer(
     '/test': function(request, response){
       response.writeHead(200, HEADERS);
       response.end("{testNull: null,testNullString: 'null',overflow: -9999}");
+    },
+    '/apistatus': function(request, response){
+      response.writeHead(200, HEADERS);
+      apistatus.checkApi(response);
     },
 
   }));
