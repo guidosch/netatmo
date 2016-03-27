@@ -34,18 +34,6 @@ var options = {
 
 var result = {};
 
-api.getMeasure(options, function(err, measure) {
-
-  /**
-  measure object looks like this:
-  { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-  **/
-  result.temperature = measure[0].value[0][0];
-  result.co2 = measure[0].value[0][1];
-  result.humidity = measure[0].value[0][2];
-
-});
-
 function handleRequest(request, response) {
 
   api.getMeasure(options, function(err, measure) {
@@ -57,11 +45,11 @@ function handleRequest(request, response) {
     result.temperature = measure[0].value[0][0];
     result.co2 = measure[0].value[0][1];
     result.humidity = measure[0].value[0][2];
+    response.writeHead(200, HEADERS);
+    response.end(JSON.stringify(result));
 
   });
-
-  response.writeHead(200, HEADERS);
-  response.end(JSON.stringify(result));
+  
 }
 
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
