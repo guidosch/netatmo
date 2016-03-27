@@ -12,8 +12,6 @@ const HEADERS = {
   'Expires': '0'
 }
 
-debugger;
-
 var api = new netatmo(auth());
 
 
@@ -66,6 +64,7 @@ function handleRequest(request, response) {
   response.end(JSON.stringify(result));
 }
 
+//todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
 
 var server = http.createServer(
   dispatch({

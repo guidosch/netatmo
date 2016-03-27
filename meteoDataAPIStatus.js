@@ -1,18 +1,27 @@
 var http = require('http');
 var moment = require('moment');
+var MAX_DATA_AGE = 25*60*1000;
+var requestOptions = {
+	hostname: "data.netcetera.com",
+	path: "/smn/smn/SMA",
+	headers: {
+		"Cache-Control":"max-age=0"
+	}
+}
 
 module.exports = {
 	checkApi: function(response) {
 
 		var status = {
 			apiAvailableStatus: false,
-			apiDataUptoDate: false
+			apiDataUptoDate: false,
+			apiDataAgeInMinutes: 0
 		};
 
-		http.get('http://data.netcetera.com/smn/smn/SMA', (res) => {
+		http.get(requestOptions, (res) => {
 			console.log(`Got response: ${res.statusCode}`);
 
-			if (res.OK) {
+			if (res.statusCode == 200) {
 				status.apiAvailableStatus = true;
 			}
 
@@ -27,15 +36,18 @@ module.exports = {
 
 			res.on('end', () => {
 				console.log("response end event...");
-				if (res.OK) {
+				if (res.statusCode == 200) {
 					var repsonseDate = moment(responseObj.dateTime);
-					console.log(repsonseDate);
-					status.apiDataUptoDate = true;
+					var diff = moment().diff(repsonseDate);
+					if (diff < MAX_DATA_AGE){
+						status.apiDataUptoDate = true;
+						console.log("Data is up to date...");
+					}
+					status.apiDataAgeInMinutes = Math.round(diff/1000/60);
+					
 				}
 				response.end(JSON.stringify(status));
 			})
-
-			//res.resume();
 
 		}).on('error', (e) => {
 			console.log(`Got error: ${e.message}`);
