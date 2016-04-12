@@ -13,8 +13,10 @@ module.exports = {
 	checkApi: function(response) {
 
 		var status = {
-			apiAvailableStatus: false,
-			apiDataUptoDate: false,
+			apiAvailableStatusAsBoolean: false,
+			apiDataUptoDateAsBoolean: false,
+			apiAvailableStatus: 0,
+			apiDataUptoDate: 0,
 			apiDataAgeInMinutes: 0
 		};
 
@@ -22,7 +24,8 @@ module.exports = {
 			console.log(`Got response: ${res.statusCode}`);
 
 			if (res.statusCode == 200) {
-				status.apiAvailableStatus = true;
+				status.apiAvailableStatusAsBoolean = true;
+				status.apiAvailableStatus = 1;
 			}
 
 			var responseObj;
@@ -40,7 +43,8 @@ module.exports = {
 					var repsonseDate = moment(responseObj.dateTime);
 					var diff = moment().diff(repsonseDate);
 					if (diff < MAX_DATA_AGE){
-						status.apiDataUptoDate = true;
+						status.apiDataUptoDateAsBoolean = true;
+						status.apiDataUptoDate = 1;
 						console.log("Data is up to date...");
 					}
 					status.apiDataAgeInMinutes = Math.round(diff/1000/60);
