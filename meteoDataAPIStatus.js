@@ -2,7 +2,7 @@ var http = require('http');
 var moment = require('moment');
 var MAX_DATA_AGE = 25*60*1000;
 var requestOptions = {
-	hostname: "data.netcetera.com",
+	hostname: "opendata.netcetera.com",
 	path: "/smn/smn/SMA",
 	headers: {
 		"Cache-Control":"max-age=0"
