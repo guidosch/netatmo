@@ -52,6 +52,29 @@ function handleRequest(request, response) {
   
 }
 
+
+var result = {};
+
+function handleLamtetricRequest(request, response) {
+
+  api.getMeasure(options, function(err, measure) {
+
+    /**
+    measure object looks like this:
+    { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
+    **/
+	result.frames = [];
+	result.frames.push({"text":measure[0].value[0][0],"icon","i2355"});
+    //result.temperature = measure[0].value[0][0];
+    //result.co2 = measure[0].value[0][1];
+    //result.humidity = measure[0].value[0][2];
+    response.writeHead(200, HEADERS);
+    response.end(JSON.stringify(result));
+
+  });
+  
+}
+
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
 
 var server = http.createServer(
@@ -63,10 +86,14 @@ var server = http.createServer(
       response.writeHead(200, HEADERS);
       response.end("{testNull: null,testNullString: 'null',overflow: -9999}");
     },
-    '/apistatus': function(request, response){
+	'/apistatus': function(request, response){
       response.writeHead(200, HEADERS);
       apistatus.checkApi(response);
     },
+	'/netatmo4lametric': function(request, response){
+      	handleLametricRequest(request, response);;
+    }
+
 
   }));
 
