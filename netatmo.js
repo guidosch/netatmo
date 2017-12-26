@@ -55,7 +55,7 @@ function handleRequest(request, response) {
 
 var result = {};
 
-function handleLamtetricRequest(request, response) {
+function handleLametricRequest(request, response) {
 
   api.getMeasure(options, function(err, measure) {
 
@@ -64,7 +64,7 @@ function handleLamtetricRequest(request, response) {
     { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
     **/
 	result.frames = [];
-	result.frames.push({"text":measure[0].value[0][0],"icon","i2355"});
+	result.frames.push({"text":measure[0].value[0][0],"icon":"i2355"});
     //result.temperature = measure[0].value[0][0];
     //result.co2 = measure[0].value[0][1];
     //result.humidity = measure[0].value[0][2];
