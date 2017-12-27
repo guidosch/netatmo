@@ -24,6 +24,6 @@
     "netatmo": "^1.3.0",
     "dispatch": "^1.0.0",
     "moment": "^2.11.1",
-    "node-schedule": "^1.2.5",
+    "node-schedule": "^1.2.5"
   }
 }
