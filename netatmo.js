@@ -74,7 +74,7 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
     var data = lametricNetatmo.createLametricFormat(measure);
-    options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
+    optionsLametric.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
     const req = http.request(optionsLametric, (res) => {
       res.setEncoding('utf8');
       res.on('data', (chunk) => {
