@@ -103,6 +103,7 @@ module.exports = {
 						result.model.frames.push({"icon":"i2416","text": rain+" mm"});
 					}
 					result.model.frames.push({"icon":"i9095","text":responseObj.windSpeed+"/"+responseObj.gustPeak+" km/h"});
+					console.log(JSON.stringify(result));
 					sendToLametric(JSON.stringify(result), options);
 				}
 			})

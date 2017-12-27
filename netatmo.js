@@ -73,7 +73,7 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
 
-    const req = http.request(options, (res) => {
+    const req = http.request(optionsLametric, (res) => {
     res.setEncoding('utf8');
     res.on('data', (chunk) => {
       console.log(`BODY: ${chunk}`);
