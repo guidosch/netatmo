@@ -16,10 +16,6 @@ const HEADERS = {
 
 var api = new netatmo(auth());
 var result = {};
-var apiKeyLametic = "a06055aec93a298ea3672c7d81ba7d2b4fa14933654a245831d335233c43e00f";
-var ipLametricDev = '192.168.2.32';
-var portLametricDev = '8080';
-var pathLametricDev = '/api/v2/device/notifications';
 
 // Get Devicelist 
 // See docs: http://dev.netatmo.com/doc/restapi/devicelist 
@@ -39,11 +35,11 @@ var options = {
 };
 
 var optionsLametric = {
-  hostname: ipLametricDev,
-  port: portLametricDev,
-  path: pathLametricDev,
+  hostname: '192.168.2.32',
+  port: "8080",
+  path: '/api/v2/device/notifications',
   method: 'POST',
-  auth: "dev:"+apiKeyLametic,
+  auth: "dev:a06055aec93a298ea3672c7d81ba7d2b4fa14933654a245831d335233c43e00f",
   headers: {
     'Content-Type': 'application/json',
     'Content-Length' : 0
@@ -98,7 +94,7 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
 });
 
 //send netatmo data to lametric 
-var k = schedule.scheduleJob('60 * * * * *', function(){
+var k = schedule.scheduleJob('40 * * * * *', function(){
  apistatus.meteoDataForLametric(optionsLametric);
 });
 
