@@ -74,11 +74,12 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
     var data = lametricNetatmo.createLametricFormat(measure);
+	  console.log("netatmo for lametric: "+data);
     optionsLametric.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
     const req = http.request(optionsLametric, (res) => {
       res.setEncoding('utf8');
       res.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`);
+        console.log(`response from netatmo to lametric req.: ${chunk}`);
       });
       res.on('end', () => {
         console.log('No more data in response.');
@@ -97,7 +98,7 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
 });
 
 //send netatmo data to lametric 
-var k = schedule.scheduleJob('33 * * * * *', function(){
+var k = schedule.scheduleJob('60 * * * * *', function(){
  apistatus.meteoDataForLametric(optionsLametric);
 });
 
