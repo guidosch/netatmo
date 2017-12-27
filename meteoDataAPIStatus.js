@@ -1,5 +1,5 @@
 var http = require('http');
-var http = require('https');
+var https = require('https');
 var moment = require('moment');
 var MAX_DATA_AGE = 25*60*1000;
 var requestOptions = {
