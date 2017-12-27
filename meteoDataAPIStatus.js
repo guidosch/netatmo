@@ -1,4 +1,5 @@
 var http = require('http');
+var http = require('https');
 var moment = require('moment');
 var MAX_DATA_AGE = 25*60*1000;
 var requestOptions = {
@@ -40,7 +41,7 @@ module.exports = {
 			apiDataAgeInMinutes: 0
 		};
 
-		http.get(requestOptions, (res) => {
+		https.get(requestOptions, (res) => {
 			console.log(`Got response: ${res.statusCode}`);
 
 			if (res.statusCode == 200) {
@@ -86,7 +87,7 @@ module.exports = {
 			},
 		};
 
-		http.get(requestOptions, (res) => {
+		https.get(requestOptions, (res) => {
 			var responseObj;
 			res.on('data', (data) => {
 				console.log(`Got data: ${data}`);
