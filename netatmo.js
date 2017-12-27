@@ -1,8 +1,11 @@
 var auth = require('./myNetatmoAuth.js');
 var netatmo = require('netatmo');
 var http = require('http');
+var request = require('request');
 var dispatch = require('dispatch');
+var schedule = require('node-schedule');
 var apistatus = require('./meteoDataAPIStatus.js');
+var lametricNetatmo = require('./lametricNetatmo.js');
 
 const PORT = 8000;
 const HEADERS = {
@@ -13,7 +16,11 @@ const HEADERS = {
 }
 
 var api = new netatmo(auth());
-
+var result = {};
+var apiKeyLametic = "a06055aec93a298ea3672c7d81ba7d2b4fa14933654a245831d335233c43e00f";
+var ipLametricDev = '192.168.2.32';
+var portLametricDev = '8080';
+var pathLametricDev = '/api/v2/device/notifications';
 
 // Get Devicelist 
 // See docs: http://dev.netatmo.com/doc/restapi/devicelist 
@@ -32,16 +39,15 @@ var options = {
   optimize: true
 };
 
-var result = {};
 
 function handleRequest(request, response) {
 
   api.getMeasure(options, function(err, measure) {
-
     /**
     measure object looks like this:
     { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
     **/
+    result = {};
     result.temperature = measure[0].value[0][0];
     result.co2 = measure[0].value[0][1];
     result.humidity = measure[0].value[0][2];
@@ -52,31 +58,28 @@ function handleRequest(request, response) {
   
 }
 
-
-var result = {};
-
-function handleLametricRequest(request, response) {
-
+//send netatmo data to lametric 
+var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
-    /**
-    measure object looks like this:
-    { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-    **/
-	result.frames = [];
-	result.frames.push({"text":measure[0].value[0][0],"icon":"i2355"});
-    //result.temperature = measure[0].value[0][0];
-    //result.co2 = measure[0].value[0][1];
-    //result.humidity = measure[0].value[0][2];
-    response.writeHead(200, HEADERS);
-    response.end(JSON.stringify(result));
+    request({
+    url: urlLametricDev,
+    method: "POST",
+    json: true,
+    body: lametricNetatmo.createLametricFormat(measure);
+    }, function (error, response, body){
+        console.log(response);
+    }).auth('dev', apiKeyLametic, false);
 
   });
-  
-}
+});
+
+//send netatmo data to lametric 
+var j = schedule.scheduleJob('33 * * * * *', function(){
+ apistatus.meteoDataForLametric(ipLametricDev, portLametricDev, pathLametricDev, apiKeyLametic);
+});
 
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
-
 var server = http.createServer(
   dispatch({
     '/netatmo': function(request, response){
@@ -85,15 +88,11 @@ var server = http.createServer(
     '/test': function(request, response){
       response.writeHead(200, HEADERS);
       response.end("{testNull: null,testNullString: 'null',overflow: -9999}");
-    },
-	'/apistatus': function(request, response){
+    }
+    '/apistatus': function(request, response){
       response.writeHead(200, HEADERS);
       apistatus.checkApi(response);
-    },
-	'/netatmo4lametric': function(request, response){
-      	handleLametricRequest(request, response);;
     }
-
 
   }));
 

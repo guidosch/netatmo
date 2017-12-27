@@ -9,6 +9,26 @@ var requestOptions = {
 	}
 }
 
+function sendToLametric(data, optios){
+	const req = http.request(options, (res) => {
+	  res.setEncoding('utf8');
+	  res.on('data', (chunk) => {
+	    console.log(`BODY: ${chunk}`);
+	  });
+	  res.on('end', () => {
+	    console.log('No more data in response.');
+	  });
+	});
+
+	req.on('error', (e) => {
+	  console.log(`problem with request: ${e.message}`);
+	});
+
+	// write data to request body
+	req.write(postData);
+	req.end();
+}
+
 module.exports = {
 	checkApi: function(response) {
 
@@ -35,8 +55,6 @@ module.exports = {
 				responseObj = JSON.parse(data);
 			});
 
-			
-
 			res.on('end', () => {
 				console.log("response end event...");
 				if (res.statusCode == 200) {
@@ -57,5 +75,47 @@ module.exports = {
 			console.log(`Got error: ${e.message}`);
 			response.end(JSON.stringify(status));
 		});
+	},
+	meteoDataForLametric: function(ip, port, path, auth) {
+
+		var options = {
+		  hostname: ip,
+		  port: post,
+		  path: path,
+		  method: 'POST',
+		  auth: "dev:"+auth,
+		  headers: {
+		    'Content-Type': 'application/json',
+		  }
+		};
+
+		var result = {
+			icon_type = "none",
+			model = {
+				frames = ["cycles":2]
+			},
+		};
+
+		http.get(requestOptions, (res) => {
+			var responseObj;
+			res.on('data', (data) => {
+				console.log(`Got data: ${data}`);
+				responseObj = JSON.parse(data);
+			});
+
+			res.on('end', () => {
+				console.log("response end event...");
+				if (res.statusCode == 200) {
+					result.model.frames.push({"icon":"i2355"+responseObj.temperature+" °C Out"});
+					result.model.frames.push({"icon":"i2416"+responseObj.precipitation+" mm"});
+					result.model.frames.push({"icon":"i9095"+responseObj.windSpeed+"/"+responseObj.gustPeak" km/h"});
+					sendToLametric(JSON.stringify(result), options);
+				}
+			})
+
+		}).on('error', (e) => {
+			console.log(`Got error: ${e.message}`);
+		});
+
 	}
-}
+} 
