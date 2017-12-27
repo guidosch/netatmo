@@ -1,7 +1,6 @@
 var auth = require('./myNetatmoAuth.js');
 var netatmo = require('netatmo');
 var http = require('http');
-var request = require('request');
 var dispatch = require('dispatch');
 var schedule = require('node-schedule');
 var apistatus = require('./meteoDataAPIStatus.js');
@@ -39,6 +38,17 @@ var options = {
   optimize: true
 };
 
+var optionsLametric = {
+  hostname: ipLametricDev,
+  port: portLametricDev,
+  path: pathLametricDev,
+  method: 'POST',
+  auth: "dev:"+apiKeyLametic,
+  headers: {
+    'Content-Type': 'application/json',
+  }
+};
+
 
 function handleRequest(request, response) {
 
@@ -62,21 +72,31 @@ function handleRequest(request, response) {
 var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
-    request({
-    url: urlLametricDev,
-    method: "POST",
-    json: true,
-    body: lametricNetatmo.createLametricFormat(measure);
-    }, function (error, response, body){
-        console.log(response);
-    }).auth('dev', apiKeyLametic, false);
+
+    const req = http.request(options, (res) => {
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+      console.log(`BODY: ${chunk}`);
+    });
+    res.on('end', () => {
+      console.log('No more data in response.');
+    });
+    });
+
+    req.on('error', (e) => {
+      console.log(`problem with request: ${e.message}`);
+    });
+
+    // write data to request body
+    req.write(lametricNetatmo.createLametricFormat(measure));
+    req.end();
 
   });
 });
 
 //send netatmo data to lametric 
-var j = schedule.scheduleJob('33 * * * * *', function(){
- apistatus.meteoDataForLametric(ipLametricDev, portLametricDev, pathLametricDev, apiKeyLametic);
+var k = schedule.scheduleJob('33 * * * * *', function(){
+ apistatus.meteoDataForLametric(optionsLametric);
 });
 
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
@@ -88,7 +108,7 @@ var server = http.createServer(
     '/test': function(request, response){
       response.writeHead(200, HEADERS);
       response.end("{testNull: null,testNullString: 'null',overflow: -9999}");
-    }
+    },
     '/apistatus': function(request, response){
       response.writeHead(200, HEADERS);
       apistatus.checkApi(response);

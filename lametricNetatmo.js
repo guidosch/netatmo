@@ -1,9 +1,10 @@
 var result = {
-			icon_type = "none",
-			model = {
-				frames = ["cycles":2]
+			icon_type : "none",
+			model : {
+				frames : [],
+				cycles : 2
 			},
-		};
+	};
 
 module.exports = {
 	createLametricFormat: function(measure) {

@@ -9,7 +9,7 @@ var requestOptions = {
 	}
 }
 
-function sendToLametric(data, optios){
+function sendToLametric(data, options){
 	const req = http.request(options, (res) => {
 	  res.setEncoding('utf8');
 	  res.on('data', (chunk) => {
@@ -25,7 +25,7 @@ function sendToLametric(data, optios){
 	});
 
 	// write data to request body
-	req.write(postData);
+	req.write(data);
 	req.end();
 }
 
@@ -76,24 +76,14 @@ module.exports = {
 			response.end(JSON.stringify(status));
 		});
 	},
-	meteoDataForLametric: function(ip, port, path, auth) {
-
-		var options = {
-		  hostname: ip,
-		  port: post,
-		  path: path,
-		  method: 'POST',
-		  auth: "dev:"+auth,
-		  headers: {
-		    'Content-Type': 'application/json',
-		  }
-		};
+	meteoDataForLametric: function(options) {
 
 		var result = {
-			icon_type = "none",
-			model = {
-				frames = ["cycles":2]
+			icon_type : "none",
+			model : {
+				frames : [],
 			},
+			model.cycles : 2
 		};
 
 		http.get(requestOptions, (res) => {
@@ -107,7 +97,10 @@ module.exports = {
 				console.log("response end event...");
 				if (res.statusCode == 200) {
 					result.model.frames.push({"icon":"i2355"+responseObj.temperature+" °C Out"});
-					result.model.frames.push({"icon":"i2416"+responseObj.precipitation+" mm"});
+					var rain = parseFloat(responseObj.precipitation);
+					if (rain > 0.1){
+						result.model.frames.push({"icon":"i2416"++" mm"});
+					}
 					result.model.frames.push({"icon":"i9095"+responseObj.windSpeed+"/"+responseObj.gustPeak" km/h"});
 					sendToLametric(JSON.stringify(result), options);
 				}
