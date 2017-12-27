@@ -100,7 +100,7 @@ module.exports = {
 				if (res.statusCode == 200) {
 					result.model.frames.push({"icon":"i2355", "text":responseObj.temperature+"°C Out"});
 					var rain = parseFloat(responseObj.precipitation);
-					if (rain > 0.1){
+					if (rain > 0){
 						result.model.frames.push({"icon":"i2416","text": rain+"mm"});
 					}
 					result.model.frames.push({"icon":"i9095","text":responseObj.windSpeed+"/"+responseObj.gustPeak+"km/h"});
