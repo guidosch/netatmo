@@ -82,8 +82,8 @@ module.exports = {
 			icon_type : "none",
 			model : {
 				frames : [],
+				cycles : 2
 			},
-			model.cycles : 2
 		};
 
 		http.get(requestOptions, (res) => {
@@ -96,12 +96,12 @@ module.exports = {
 			res.on('end', () => {
 				console.log("response end event...");
 				if (res.statusCode == 200) {
-					result.model.frames.push({"icon":"i2355"+responseObj.temperature+" °C Out"});
+					result.model.frames.push({"icon":"i2355", "text":responseObj.temperature+" °C Out"});
 					var rain = parseFloat(responseObj.precipitation);
 					if (rain > 0.1){
-						result.model.frames.push({"icon":"i2416"++" mm"});
+						result.model.frames.push({"icon":"i2416","text": rain+" mm"});
 					}
-					result.model.frames.push({"icon":"i9095"+responseObj.windSpeed+"/"+responseObj.gustPeak" km/h"});
+					result.model.frames.push({"icon":"i9095","text":responseObj.windSpeed+"/"+responseObj.gustPeak+" km/h"});
 					sendToLametric(JSON.stringify(result), options);
 				}
 			})
