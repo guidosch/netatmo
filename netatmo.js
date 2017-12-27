@@ -46,6 +46,7 @@ var optionsLametric = {
   auth: "dev:"+apiKeyLametic,
   headers: {
     'Content-Type': 'application/json',
+    'Content-Length' : 0
   }
 };
 
@@ -72,15 +73,16 @@ function handleRequest(request, response) {
 var j = schedule.scheduleJob('30 * * * * *', function(){
   api.getMeasure(options, function(err, measure) {
 
-
+    var data = lametricNetatmo.createLametricFormat(measure);
+    options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
     const req = http.request(optionsLametric, (res) => {
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      console.log(`BODY: ${chunk}`);
-    });
-    res.on('end', () => {
-      console.log('No more data in response.');
-    });
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => {
+        console.log(`BODY: ${chunk}`);
+      });
+      res.on('end', () => {
+        console.log('No more data in response.');
+      });
     });
 
     req.on('error', (e) => {
@@ -88,7 +90,7 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
     });
 
     // write data to request body
-    req.write(lametricNetatmo.createLametricFormat(measure));
+    req.write(data);
     req.end();
 
   });

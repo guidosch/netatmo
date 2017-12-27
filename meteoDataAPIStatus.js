@@ -11,6 +11,7 @@ var requestOptions = {
 }
 
 function sendToLametric(data, options){
+	options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
 	const req = http.request(options, (res) => {
 	  res.setEncoding('utf8');
 	  res.on('data', (chunk) => {
@@ -103,7 +104,6 @@ module.exports = {
 						result.model.frames.push({"icon":"i2416","text": rain+" mm"});
 					}
 					result.model.frames.push({"icon":"i9095","text":responseObj.windSpeed+"/"+responseObj.gustPeak+" km/h"});
-					console.log(JSON.stringify(result));
 					sendToLametric(JSON.stringify(result), options);
 				}
 			})
