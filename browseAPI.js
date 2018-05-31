@@ -11,6 +11,7 @@ api.getDevicelist(function(err, devices, modules) {
   //console.log(devices);
   //console.log(modules);
   modules.forEach(element => {
+      //only list my modules
       if (element.main_device === '70:ee:50:01:97:20') {
         console.log(element);
       }
@@ -60,6 +61,8 @@ api.getMeasure(optionsModuleOutside, function(err, measure) {
 api.getMeasure(optionsModuleRoom, function(err, measure) {
     console.log(optionsModuleRoom.x);
     console.log(JSON.stringify(measure));
-
+    process.exit();
 });
+
+
 

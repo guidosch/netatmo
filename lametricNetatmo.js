@@ -1,20 +1,29 @@
 var result = {
-			icon_type : "none",
-			model : {
-				frames : [],
-				cycles : 2
-			},
-	};
+	icon_type: "none",
+	model: {
+		frames: [],
+		cycles: 2
+	},
+};
 
+var optionsLametric = {
+	hostname: '192.168.2.32',
+	port: "8080",
+	path: '/api/v2/device/notifications',
+	method: 'POST',
+	auth: "dev:a06055aec93a298ea3672c7d81ba7d2b4fa14933654a245831d335233c43e00f",
+	headers: {
+		'Content-Type': 'application/json',
+		'Content-Length': 0
+	}
+};
 module.exports = {
-	createLametricFormat: function(measure) {
-		result.model.frames = [];	
-		//indoor temp
-		result.model.frames.push({"icon":"i2355","text":measure[0].value[0][0]+"°C In"});
-		//co2
-		result.model.frames.push({"icon":"i12785","text":measure[0].value[0][1]});
-		//humidity
-		result.model.frames.push({"icon":"i3359","text":measure[0].value[0][2]+"%"});
+	optionsLametric: optionsLametric,
+	createLametricFormat : function (measurments) {
+		result.model.frames = [];
+		result.model.frames.push({ "icon": "i2355", "text": measurments.temperatureMain + "°C In" });
+		result.model.frames.push({ "icon": "i12785", "text": measurments.co2Main });
+		result.model.frames.push({ "icon": "i3359", "text": measurments.humidityMain + "%" });
 		return JSON.stringify(result);
 	}
 };
