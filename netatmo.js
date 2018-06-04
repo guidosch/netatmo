@@ -46,7 +46,7 @@ function readFromNetatmoAPI() {
   console.log(JSON.stringify(result));
 }
 
-var j = schedule.scheduleJob('120 * * * * *', function(){
+var j = schedule.scheduleJob('59 * * * * *', function(){
   readFromNetatmoAPI();
 });
 
@@ -75,7 +75,10 @@ var j = schedule.scheduleJob('30 * * * * *', function(){
     req.end();
 });
 
-//send sma station opendata  to lametric 
+//send sma station opendata  to lametric
+
+//TODO --> chaching data like result object and do not call every 40s
+
 var k = schedule.scheduleJob('40 * * * * *', function(){
  apistatus.meteoDataForLametric(lametricNetatmo.optionsLametric);
 });
