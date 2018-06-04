@@ -11,6 +11,7 @@ var util = require('./util.js');
 const PORT = 8000;
 const HEADERS = util.HEADERS;
 var api = new netatmo(auth());
+//result object from netatmo devices and meteo api in one object
 var result = {};
 
 
@@ -43,7 +44,7 @@ function readFromNetatmoAPI() {
   });
 }
 
-var j = schedule.scheduleJob('60 * * * * *', function(){
+var j = schedule.scheduleJob('120 * * * * *', function(){
   readFromNetatmoAPI();
 });
 
