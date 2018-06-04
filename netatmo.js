@@ -42,6 +42,8 @@ function readFromNetatmoAPI() {
     result.temperatureOutside = measure[0].value[0][0];
     result.humidityOutside = measure[0].value[0][1];
   });
+  console.log(new Date())
+  console.log(JSON.stringify(result));
 }
 
 var j = schedule.scheduleJob('120 * * * * *', function(){
