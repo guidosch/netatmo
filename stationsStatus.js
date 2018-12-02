@@ -1,22 +1,27 @@
-var auth = require('./myNetatmoAuth.js');
-var netatmo = require('netatmo');
-var devices = require('./devices.js');
-var api = new netatmo(auth());
+const auth = require('./myNetatmoAuth.js');
+const netatmo = require('netatmo');
+const devices = require('./devices.js');
+const api = new netatmo(auth());
 
-var result = {};
+const result = {};
 module.exports = {
     checkStationsData: function (response) {
 
         api.getStationsData(devices.optionsMainStation, function (err, stationsData) {
-            /**
-            measure object looks like this:
-            { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-            **/
-            //result.temperatureMain = measure[0].value[0][0];
-            //result.co2Main = measure[0].value[0][1];
-            //result.humidityMain = measure[0].value[0][2];
-            response.end(JSON.stringify(stationsData));
-            console.log(JSON.stringify("result from getStationsData: "+stationsData));
+            const mainModuleName = stationsData[0].module_name;
+            mainOnline = stationsData[0].reachable;
+            result.mainOnline = mainOnline;
+            
+            if (mainOnline && mainModuleName === "Wohnzimmer") {
+                //module 1 --> outdoor
+                result.module1 = stationsData[0].modules[0].module_name;
+                result.module1Online = stationsData[0].modules[0].reachable;
+                //module 2 --> zimmer
+                result.module2 = stationsData[0].modules[1].module_name;
+                result.module2Online = stationsData[0].modules[1].reachable;
+            }
+            //console.log(JSON.stringify(result));
+            response.end(JSON.stringify(result));
         });
     }
 }
