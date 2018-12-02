@@ -7,6 +7,7 @@ var apistatus = require('./meteoDataAPIStatus.js');
 var lametricNetatmo = require('./lametricNetatmo.js');
 var devices = require('./devices.js');
 var util = require('./util.js');
+var stationsStatus = require('./stationsStatus.js')
 
 const PORT = 8000;
 const HEADERS = util.HEADERS;
@@ -98,6 +99,10 @@ var server = http.createServer(
     '/apistatus': function(request, response){
       response.writeHead(200, HEADERS);
       apistatus.checkApi(response);
+    },
+    '/stationsdata': function(request, response) {
+      response.writeHead(200, HEADERS);
+      stationsStatus.checkStationsData(response);
     }
 
   }));
