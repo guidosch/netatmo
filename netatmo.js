@@ -23,7 +23,8 @@ function readFromNetatmoAPI() {
     **/
     result.temperatureMain = measure[0].value[0][0];
     result.co2Main = measure[0].value[0][1];
-    result.humidityMain = measure[0].value[0][2];
+    var value = measure[0].value[0][2];
+    result.humidityMain = parseInt(value)-5; //main humidity is 5% too high
   });
   api.getMeasure(devices.optionsModuleRoom, function (err, measure) {
     /**
