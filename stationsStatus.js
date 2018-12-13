@@ -1,6 +1,6 @@
-const auth = require('./myNetatmoAuth.js');
-const netatmo = require('netatmo');
-const devices = require('./devices.js');
+const auth = require("./myNetatmoAuth.js");
+const netatmo = require("netatmo");
+const devices = require("./devices.js");
 const api = new netatmo(auth());
 
 const result = {};
@@ -9,9 +9,9 @@ module.exports = {
 
         api.getStationsData(devices.optionsMainStation, function (err, stationsData) {
             const mainModuleName = stationsData[0].module_name;
-            mainOnline = stationsData[0].reachable;
+            const mainOnline = stationsData[0].reachable;
             result.mainOnline = mainOnline;
-            
+
             if (mainOnline && mainModuleName === "Wohnzimmer") {
                 //module 1 --> outdoor
                 result.module1 = stationsData[0].modules[0].module_name;
@@ -24,7 +24,7 @@ module.exports = {
             response.end(JSON.stringify(result));
         });
     }
-}
+};
 
 
 

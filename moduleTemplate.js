@@ -1,8 +1,8 @@
 var myObject = {
-	myProperty: 'hi guido',
+    myProperty: "hi guido",
 };
 var myObject2 = {
-	myProperty2: 'hi annette',
+    myProperty2: "hi annette",
 };
 
 module.exports.myObject = myObject;

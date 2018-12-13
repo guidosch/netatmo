@@ -4,7 +4,8 @@
   "description": "Access to my netamto via api",
   "main": "netatmo.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "node_modules/.bin/eslint ." 
   },
   "repository": {
     "type": "git",
@@ -27,5 +28,10 @@
   },
   "devDependencies": {
     "eslint": "^5.8.0"
-  }
+  },
+  "eslintConfig": {
+    "env": {
+        "node": true
+    }
+}
 }
