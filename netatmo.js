@@ -8,6 +8,7 @@ var lametricNetatmo = require("./lametricNetatmo.js");
 var devices = require("./devices.js");
 var util = require("./util.js");
 var stationsStatus = require("./stationsStatus.js");
+var openweathermap = require("./openweathermap.js");
 
 const PORT = 8000;
 const HEADERS = util.HEADERS;
@@ -18,29 +19,29 @@ var result = {};
 
 function readFromNetatmoAPI() {
     api.getMeasure(devices.optionsMainStation, function (err, measure) {
-    /**
-    measure object looks like this:
-    { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-    **/
+        /**
+        measure object looks like this:
+        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
+        **/
         result.temperatureMain = measure[0].value[0][0];
         result.co2Main = measure[0].value[0][1];
         var value = measure[0].value[0][2];
         result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
     });
     api.getMeasure(devices.optionsModuleRoom, function (err, measure) {
-    /**
-    measure object looks like this:
-    { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-    **/
+        /**
+        measure object looks like this:
+        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
+        **/
         result.temperatureRoom = measure[0].value[0][0];
         result.co2Room = measure[0].value[0][1];
         result.humidityRoom = measure[0].value[0][2];
     });
     api.getMeasure(devices.optionsModuleOutside, function (err, measure) {
-    /**
-    measure object looks like this:
-    { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-    **/
+        /**
+        measure object looks like this:
+        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
+        **/
         result.temperatureOutside = measure[0].value[0][0];
         result.humidityOutside = measure[0].value[0][1];
     });
@@ -103,6 +104,10 @@ var server = http.createServer(
         "/stationsdata": function (request, response) {
             response.writeHead(200, HEADERS);
             stationsStatus.checkStationsData(response);
+        },
+        "/sunshinenext6hours": function (request, response) {
+            response.writeHead(200, HEADERS);
+            openweathermap.forecast(response);
         }
 
     }));
