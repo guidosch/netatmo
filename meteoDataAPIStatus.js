@@ -100,6 +100,7 @@ module.exports = {
                 if (res.statusCode == 200) {
                     result.model.frames.push({ "icon": "i2355", "text": responseObj.temperature + "°C Out" });
                     var rain = parseFloat(responseObj.precipitation);
+                    //todo convert double to light rain, heavy rain...
                     if (rain > 0) {
                         result.model.frames.push({ "icon": "i2416", "text": rain + "mm" });
                     }

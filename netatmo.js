@@ -78,7 +78,7 @@ schedule.scheduleJob("30 * * * * *", function () {
     req.end();
 });
 
-//send sma station opendata  to lametric
+//send sma station opendata to lametric
 
 //TODO --> chaching data like result object and do not call every 40s
 
@@ -107,7 +107,11 @@ var server = http.createServer(
         },
         "/sunshinenext6hours": function (request, response) {
             response.writeHead(200, HEADERS);
-            openweathermap.forecast(response);
+            openweathermap.sunshineForecast(response);
+        },
+        "/thunderstomwarning": function (request, response) {
+            response.writeHead(200, HEADERS);
+            openweathermap.thunderstormForecast(response);
         }
 
     }));

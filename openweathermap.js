@@ -1,52 +1,80 @@
 
 const https = require("https");
+const auth = require("./myNetatmoAuth.js");
 
 //zürich
 const cityId = 2657896;
 //api key für guido.schnider@gmail.com from openweathermap.org
-const apiKey = "16b9e0f9dfb60ed51feb4a2cc3dbbd58";
+const apiKey = auth().apiKeyOpenweathermap;
 
 module.exports = {
-    forecast: function (response) {
-        let result = {};
-        result.sunshine = false;
+    sunshineForecast: function (response) {
+        const result = {};
+        result.sunshine = 0;
+        result.type = "sun";
+        doRequest(response, result);
+    },
+    thunderstormForecast: function (response) {
+        const result = {};
+        result.thunderstorm = 0;
+        result.type = "thunderstorm";
+        doRequest(response, result);
+    }
 
-        https.get("https://api.openweathermap.org/data/2.5/forecast?id=" + cityId + "&appid=" + apiKey, (resp) => {
-            let data = "";
+};
 
-            // A chunk of data has been recieved.
-            resp.on("data", (chunk) => {
-                data += chunk;
-            });
+function doRequest(response, result) {
 
-            // The whole response has been received. Print out the result.
-            resp.on("end", () => {
-                let weather = JSON.parse(data);
+    https.get("https://api.openweathermap.org/data/2.5/forecast?id=" + cityId + "&appid=" + apiKey, (resp) => {
+        let data = "";
+        // A chunk of data has been recieved.
+        resp.on("data", (chunk) => {
+            data += chunk;
+        });
+        resp.on("end", () => {
+            let weather = JSON.parse(data);
+
+            switch (result.type) {
+            case "sun":
+                result.sunshine = 0;
                 if (weather.cnt > 2) {
-                    result.sunshine = false;
                     //the sun shines only on daytime --> "d"
-                    if (weather.list[0].sys.pod === "d") {
+                    let hours3 = weather.list[0].sys.pod === "d";
+                    let hours6 = weather.list[1].sys.pod === "d";
+                    if (hours3 === "d" || hours6 === "d") {
                         for (let i = 0; i < 2; i++) {
                             let weatherId = weather.list[i].weather.id;
                             //weather cond. ids: https://openweathermap.org/weather-conditions
                             if (weatherId >= 800 && weatherId < 803) {
-                                result.sunshine = true;
-                            } else {
-                                result.sunshine = false;
+                                result.sunshine = 1;
                             }
                         }
                     }
                 }
                 response.end(JSON.stringify(result));
-            });
+                break;
 
-        }).on("error", (err) => {
-            console.log("Error: " + err.message);
-            response.end(JSON.stringify(result));
+            case "thunderstorm":
+                result.thunderstorm = 0;
+                if (weather.cnt > 1) {
+                    let weatherId = weather.list[0].weather.id;
+                    //weather cond. ids: https://openweathermap.org/weather-conditions
+                    if (weatherId >= 200 && weatherId < 232) {
+                        result.thunderstorm = 1;
+                    }
+                }
+                response.end(JSON.stringify(result));
+                break;
+            default:
+                result.type = "error";
+                response.end(JSON.stringify(result));
+                break;
+            }
+
         });
-    }
-};
-
-
-
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+        response.end(JSON.stringify(result));
+    });
+}
 
