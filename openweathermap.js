@@ -33,7 +33,7 @@ function doRequest(response, result) {
         });
         resp.on("end", () => {
             const weather = JSON.parse(data);
-
+            var weatherId = 0;
             switch (result.type) {
                 case "sun":
                     result.sunshine = 0;
@@ -43,7 +43,7 @@ function doRequest(response, result) {
                         const hours6 = weather.list[1].sys.pod === "d";
                         if (hours3 === "d" || hours6 === "d") {
                             for (var i = 0; i < 2; i++) {
-                                const weatherId = weather.list[i].weather.id;
+                                weatherId = weather.list[i].weather.id;
                                 //weather cond. ids: https://openweathermap.org/weather-conditions
                                 if (weatherId >= 800 && weatherId < 803) {
                                     result.sunshine = 1;
@@ -57,7 +57,7 @@ function doRequest(response, result) {
                 case "thunderstorm":
                     result.thunderstorm = 0;
                     if (weather.cnt > 1) {
-                        const weatherId = weather.list[0].weather.id;
+                        weatherId = weather.list[0].weather.id;
                         //weather cond. ids: https://openweathermap.org/weather-conditions
                         if (weatherId >= 200 && weatherId < 232) {
                             result.thunderstorm = 1;
