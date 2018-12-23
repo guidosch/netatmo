@@ -26,7 +26,7 @@ module.exports = {
 function doRequest(response, result) {
 
     https.get("https://api.openweathermap.org/data/2.5/forecast?id=" + cityId + "&appid=" + apiKey, (resp) => {
-        let data = "";
+        var data = "";
         // A chunk of data has been recieved.
         resp.on("data", (chunk) => {
             data += chunk;
@@ -35,40 +35,40 @@ function doRequest(response, result) {
             let weather = JSON.parse(data);
 
             switch (result.type) {
-            case "sun":
-                result.sunshine = 0;
-                if (weather.cnt > 2) {
-                    //the sun shines only on daytime --> "d"
-                    let hours3 = weather.list[0].sys.pod === "d";
-                    let hours6 = weather.list[1].sys.pod === "d";
-                    if (hours3 === "d" || hours6 === "d") {
-                        for (let i = 0; i < 2; i++) {
-                            let weatherId = weather.list[i].weather.id;
-                            //weather cond. ids: https://openweathermap.org/weather-conditions
-                            if (weatherId >= 800 && weatherId < 803) {
-                                result.sunshine = 1;
+                case "sun":
+                    result.sunshine = 0;
+                    if (weather.cnt > 2) {
+                        //the sun shines only on daytime --> "d"
+                        let hours3 = weather.list[0].sys.pod === "d";
+                        let hours6 = weather.list[1].sys.pod === "d";
+                        if (hours3 === "d" || hours6 === "d") {
+                            for (let i = 0; i < 2; i++) {
+                                let weatherId = weather.list[i].weather.id;
+                                //weather cond. ids: https://openweathermap.org/weather-conditions
+                                if (weatherId >= 800 && weatherId < 803) {
+                                    result.sunshine = 1;
+                                }
                             }
                         }
                     }
-                }
-                response.end(JSON.stringify(result));
-                break;
+                    response.end(JSON.stringify(result));
+                    break;
 
-            case "thunderstorm":
-                result.thunderstorm = 0;
-                if (weather.cnt > 1) {
-                    let weatherId = weather.list[0].weather.id;
-                    //weather cond. ids: https://openweathermap.org/weather-conditions
-                    if (weatherId >= 200 && weatherId < 232) {
-                        result.thunderstorm = 1;
+                case "thunderstorm":
+                    result.thunderstorm = 0;
+                    if (weather.cnt > 1) {
+                        let weatherId = weather.list[0].weather.id;
+                        //weather cond. ids: https://openweathermap.org/weather-conditions
+                        if (weatherId >= 200 && weatherId < 232) {
+                            result.thunderstorm = 1;
+                        }
                     }
-                }
-                response.end(JSON.stringify(result));
-                break;
-            default:
-                result.type = "error";
-                response.end(JSON.stringify(result));
-                break;
+                    response.end(JSON.stringify(result));
+                    break;
+                default:
+                    result.type = "error";
+                    response.end(JSON.stringify(result));
+                    break;
             }
 
         });
