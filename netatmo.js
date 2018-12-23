@@ -115,7 +115,7 @@ var server = http.createServer(
             response.writeHead(200, HEADERS);
             openweathermap.sunshineForecast(response);
         },
-        "/thunderstomwarning": function (request, response) {
+        "/thunderstormwarning": function (request, response) {
             response.writeHead(200, HEADERS);
             openweathermap.thunderstormForecast(response);
         }
