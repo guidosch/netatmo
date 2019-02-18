@@ -4,8 +4,8 @@
   "description": "Access to my netamto via api",
   "main": "netatmo.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "node_modules/.bin/eslint ." 
+    "test": "mocha --timeout 10000",
+    "lint": "node_modules/.bin/eslint ."
   },
   "repository": {
     "type": "git",
@@ -27,11 +27,15 @@
     "node-schedule": "^1.2.5"
   },
   "devDependencies": {
-    "eslint": "^5.8.0"
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "eslint": "^5.8.0",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.4"
   },
   "eslintConfig": {
     "env": {
-        "node": true
+      "node": true
     }
-}
+  }
 }

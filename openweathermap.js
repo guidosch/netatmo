@@ -37,13 +37,13 @@ function doRequest(response, result) {
             switch (result.type) {
                 case "sun":
                     result.sunshine = 0;
-                    if (weather.cnt > 2) {
+                    if (weather.cnt > 2) { //number of lines returned
                         //the sun shines only on daytime --> "d"
                         const hours3 = weather.list[0].sys.pod === "d";
                         const hours6 = weather.list[1].sys.pod === "d";
-                        if (hours3 === "d" || hours6 === "d") {
+                        if (hours3 || hours6) {
                             for (var i = 0; i < 2; i++) {
-                                weatherId = weather.list[i].weather.id;
+                                weatherId = weather.list[i].weather[0].id;
                                 //weather cond. ids: https://openweathermap.org/weather-conditions
                                 if (weatherId >= 800 && weatherId < 803) {
                                     result.sunshine = 1;
@@ -57,7 +57,7 @@ function doRequest(response, result) {
                 case "thunderstorm":
                     result.thunderstorm = 0;
                     if (weather.cnt > 1) {
-                        weatherId = weather.list[0].weather.id;
+                        weatherId = weather.list[0].weather[0].id;
                         //weather cond. ids: https://openweathermap.org/weather-conditions
                         if (weatherId >= 200 && weatherId < 232) {
                             result.thunderstorm = 1;
