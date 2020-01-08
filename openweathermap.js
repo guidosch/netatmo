@@ -45,7 +45,7 @@ function doRequest(response, result) {
                             for (var i = 0; i < 2; i++) {
                                 weatherId = weather.list[i].weather[0].id;
                                 //weather cond. ids: https://openweathermap.org/weather-conditions
-                                if (weatherId >= 800 && weatherId < 803) {
+                                if (weatherId >= 800 && weatherId <= 803) {
                                     result.sunshine = 1;
                                 }
                             }
