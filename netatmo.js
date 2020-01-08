@@ -23,11 +23,16 @@ function readFromNetatmoAPI() {
         measure object looks like this:
         { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
         **/
+
+        var debug = JSON.stringify(measure);
+        //console.log(debug);
+
         if (Array.isArray(measure)) {
             result.temperatureMain = measure[0].value[0][0];
             result.co2Main = measure[0].value[0][1];
             var value = measure[0].value[0][2];
             result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
+            result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
         }
     });
     api.getMeasure(devices.optionsModuleRoom, function (err, measure) {
