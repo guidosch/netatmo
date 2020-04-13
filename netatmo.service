@@ -1,0 +1,12 @@
+[Service]
+ExecStart=/usr/local/bin/node /var/www/netatmo/netatmo.js 
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=netatmo
+User=pi
+Group=pi
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
