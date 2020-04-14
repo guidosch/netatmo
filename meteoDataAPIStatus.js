@@ -1,10 +1,17 @@
 var http = require("http");
 var https = require("https");
 var moment = require("moment");
+var Particle = require("particle-api-js");
+var particle = new Particle();
+var particle_auth_token;
+var particle_username = "guido.schnider@gmail.com";
+var particle_password = "9cX6iUyRyjmAWG2XTfon";
+
 var MAX_DATA_AGE = 25 * 60 * 1000;
+
 var requestOptions = {
-    hostname: "opendata.netcetera.com",
-    path: "/smn/smn/SMA",
+    hostname: "192.168.2.40:4712",
+    path: "/smn/SMA",
     headers: {
         "Cache-Control": "max-age=0"
     }
@@ -29,6 +36,32 @@ function sendToLametric(data, options) {
     // write data to request body
     req.write(data);
     req.end();
+}
+
+function sendToParticle(particleData) {
+    var _particleData = particleData;
+    particle.login({ username: particle_username, password: particle_password }).then(
+        function (data) {
+            particle_auth_token = data.body.access_token;
+
+            var publishEventPr = particle.publishEvent({
+                name: "meteodata", data: JSON.stringify(_particleData), auth: particle_auth_token
+            });
+
+            publishEventPr.then(
+                function (data) {
+                    if (data.body.ok) { console.log("Event published succesfully"); }
+                },
+                function (err) {
+                    console.log("Failed to publish event: " + err);
+                }
+            );
+
+        },
+        function (err) {
+            console.log("Could not log in.", err);
+        }
+    );
 }
 
 module.exports = {
@@ -96,7 +129,6 @@ module.exports = {
             });
 
             res.on("end", () => {
-                console.log("response end event...");
                 if (res.statusCode == 200) {
                     result.model.frames.push({ "icon": "i2355", "text": responseObj.temperature + "°C Out" });
                     var rain = parseFloat(responseObj.precipitation);
@@ -113,5 +145,42 @@ module.exports = {
             console.log(`Got error: ${e.message}`);
         });
 
-    }
+    },
+
+    meteoDataForParticle: function () {
+
+        var result = {
+            sunshine: 0,
+            gustPeak: 0,
+            outsidetemperature: 0,
+            outsidehumidity: 0,
+            precipitation: 0,
+            status: "ok"
+        };
+
+        https.get(requestOptions, (res) => {
+            var responseObj;
+            res.on("data", (data) => {
+                console.log(`Got data: ${data}`);
+                responseObj = JSON.parse(data);
+            });
+
+            res.on("end", () => {
+                if (res.statusCode == 200) {
+
+                    result.sunshine = responseObj.sunshine;
+                    result.gustPeak = responseObj.gustPeak;
+                    result.outsidetemperature = responseObj.temperature;
+                    result.outsidehumidity = responseObj.humidity;
+                    result.precipitation = responseObj.precipitation;
+
+                    sendToParticle(JSON.stringify(result));
+                }
+            });
+
+        }).on("error", (e) => {
+            console.log(`Got error: ${e.message}`);
+        });
+
+    },
 }; 

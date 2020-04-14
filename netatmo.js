@@ -91,10 +91,13 @@ schedule.scheduleJob("30 * * * * *", function () {
 
 //send sma station opendata to lametric
 
-//TODO --> chaching data like result object and do not call every 40s
 
 schedule.scheduleJob("40 * * * * *", function () {
     apistatus.meteoDataForLametric(lametricNetatmo.optionsLametric);
+});
+
+schedule.scheduleJob("30 * * * * *", function () {
+    apistatus.meteoDataForParticle();
 });
 
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
