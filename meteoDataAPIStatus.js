@@ -1,16 +1,17 @@
+var auth = require("./myParticleAuth.js");
 var http = require("http");
-var https = require("https");
 var moment = require("moment");
 var Particle = require("particle-api-js");
 var particle = new Particle();
 var particle_auth_token;
-var particle_username = "guido.schnider@gmail.com";
-var particle_password = "9cX6iUyRyjmAWG2XTfon";
+var particle_username = auth.username();
+var particle_password = auth.password();
 
 var MAX_DATA_AGE = 25 * 60 * 1000;
 
 var requestOptions = {
-    hostname: "192.168.2.40:4712",
+    host: "192.168.2.40",
+    port: 4712,
     path: "/smn/SMA",
     headers: {
         "Cache-Control": "max-age=0"
@@ -43,9 +44,9 @@ function sendToParticle(particleData) {
     particle.login({ username: particle_username, password: particle_password }).then(
         function (data) {
             particle_auth_token = data.body.access_token;
-
+            console.log("particle event: " + _particleData);
             var publishEventPr = particle.publishEvent({
-                name: "meteodata", data: JSON.stringify(_particleData), auth: particle_auth_token
+                name: "meteodata", data: _particleData, auth: particle_auth_token
             });
 
             publishEventPr.then(
@@ -75,7 +76,7 @@ module.exports = {
             apiDataAgeInMinutes: 0
         };
 
-        https.get(requestOptions, (res) => {
+        http.get(requestOptions, (res) => {
             console.log(`Got response: ${res.statusCode}`);
 
             if (res.statusCode == 200) {
@@ -121,7 +122,7 @@ module.exports = {
             },
         };
 
-        https.get(requestOptions, (res) => {
+        http.get(requestOptions, (res) => {
             var responseObj;
             res.on("data", (data) => {
                 console.log(`Got data: ${data}`);
@@ -158,7 +159,7 @@ module.exports = {
             status: "ok"
         };
 
-        https.get(requestOptions, (res) => {
+        http.get(requestOptions, (res) => {
             var responseObj;
             res.on("data", (data) => {
                 console.log(`Got data: ${data}`);
