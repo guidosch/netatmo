@@ -16,51 +16,72 @@ var api = new netatmo(auth());
 //result object from netatmo devices and meteo api in one object
 var result = {};
 
+api.on("error", function (error) {
+    console.error('Netatmo threw an error: ' + error);
+});
+
+api.on("warning", function (error) {
+    console.log('Netatmo threw a warning: ' + error);
+});
+
 
 function readFromNetatmoAPI() {
     api.getMeasure(devices.optionsMainStation, function (err, measure) {
         /**
         measure object looks like this:
-        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
+        [{ beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }]
         **/
 
-        var debug = JSON.stringify(measure);
-        //console.log(debug);
+        try {
+            if (Array.isArray(measure) && measure.length > 0) {
+                result.temperatureMain = measure[0].value[0][0];
+                result.co2Main = measure[0].value[0][1];
+                var value = measure[0].value[0][2];
+                result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
+                result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
+                console.log("Got data from main module");
+            } else {
+                console.log("Error reading from main netatmo module: " + JSON.stringify(measure));
+            }
 
-        if (Array.isArray(measure) && measure[0].value != undefined) {
-            result.temperatureMain = measure[0].value[0][0];
-            result.co2Main = measure[0].value[0][1];
-            var value = measure[0].value[0][2];
-            result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
-            result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
-        } else {
-            console.log("Error reading from main netatmo module: "+JSON.stringify(measure));
+        } catch (error) {
+            console.log(error);
         }
+
+
     });
     api.getMeasure(devices.optionsModuleRoom, function (err, measure) {
-        /**
-        measure object looks like this:
-        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-        **/
-        if (Array.isArray(measure) && measure[0].value != undefined) {
-            result.temperatureRoom = measure[0].value[0][0];
-            result.co2Room = measure[0].value[0][1];
-            result.humidityRoom = measure[0].value[0][2];
-        } else {
-            console.log("Error reading from room netatmo module: "+JSON.stringify(measure));
+        try {
+            if (Array.isArray(measure) && measure.length > 0) {
+                result.temperatureRoom = measure[0].value[0][0];
+                result.co2Room = measure[0].value[0][1];
+                result.humidityRoom = measure[0].value[0][2];
+                console.log("Got data from room module");
+            } else {
+                console.log("Error reading from room netatmo module: " + JSON.stringify(measure));
+            }
+
+        } catch (error) {
+            console.log(error);
         }
     });
     api.getMeasure(devices.optionsModuleOutside, function (err, measure) {
-        /**
-        measure object looks like this:
-        { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
-        **/
-        if (Array.isArray(measure) && measure[0].value != undefined) {
-            result.temperatureOutside = measure[0].value[0][0];
-            result.humidityOutside = measure[0].value[0][1];
-        } else {
-            console.log("Error reading from outdoor netatmo module: "+JSON.stringify(measure));
+
+        var debug = JSON.stringify(measure);
+        console.log("Measure object: " + debug);
+
+        try {
+            if (Array.isArray(measure) && measure.length > 0) {
+                result.temperatureOutside = measure[0].value[0][0];
+                result.humidityOutside = measure[0].value[0][1];
+                console.log("Got data from outdoor module");
+            } else {
+                console.log("Error reading from outdoor netatmo module: " + JSON.stringify(measure));
+            }
+        } catch (error) {
+            console.log(error);
         }
+
     });
     console.log(new Date());
     console.log(JSON.stringify(result));
