@@ -27,12 +27,14 @@ function readFromNetatmoAPI() {
         var debug = JSON.stringify(measure);
         //console.log(debug);
 
-        if (Array.isArray(measure)) {
+        if (Array.isArray(measure) && Array.isArray(measure[0].value)) {
             result.temperatureMain = measure[0].value[0][0];
             result.co2Main = measure[0].value[0][1];
             var value = measure[0].value[0][2];
             result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
             result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
+        } else {
+            console.log("Error reading from main netatmo module: "+JSON.stringify(measure));
         }
     });
     api.getMeasure(devices.optionsModuleRoom, function (err, measure) {
@@ -40,10 +42,12 @@ function readFromNetatmoAPI() {
         measure object looks like this:
         { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
         **/
-        if (Array.isArray(measure)) {
+        if (Array.isArray(measure) && Array.isArray(measure[0].value)) {
             result.temperatureRoom = measure[0].value[0][0];
             result.co2Room = measure[0].value[0][1];
             result.humidityRoom = measure[0].value[0][2];
+        } else {
+            console.log("Error reading from room netatmo module: "+JSON.stringify(measure));
         }
     });
     api.getMeasure(devices.optionsModuleOutside, function (err, measure) {
@@ -51,9 +55,11 @@ function readFromNetatmoAPI() {
         measure object looks like this:
         { beg_time: 1452028500, value: [ [ 21.7, 1532, 61 ] ] }
         **/
-        if (Array.isArray(measure)) {
+        if (Array.isArray(measure) && Array.isArray(measure[0].value)) {
             result.temperatureOutside = measure[0].value[0][0];
             result.humidityOutside = measure[0].value[0][1];
+        } else {
+            console.log("Error reading from outdoor netatmo module: "+JSON.stringify(measure));
         }
     });
     console.log(new Date());
@@ -90,8 +96,6 @@ schedule.scheduleJob("30 * * * * *", function () {
 });
 
 //send sma station opendata to lametric
-
-
 schedule.scheduleJob("40 * * * * *", function () {
     apistatus.meteoDataForLametric(lametricNetatmo.optionsLametric);
 });
