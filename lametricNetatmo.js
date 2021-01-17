@@ -22,8 +22,8 @@ module.exports = {
     createLametricFormat: function (measurments) {
         result.model.frames = [];
         result.model.frames.push({ "icon": "i2355", "text": Number.parseFloat(measurments.temperatureMain).toFixed(1) + "°C In" });
-        result.model.frames.push({ "icon": "i12785", "text": Number.parseFloat(measurments.co2Main).toFixed(1) });
-        result.model.frames.push({ "icon": "i3359", "text": Number.parseFloat(measurments.humidityMain).toFixed(1) + "%" });
+        result.model.frames.push({ "icon": "i12785", "text": measurments.co2Main });
+        result.model.frames.push({ "icon": "i3359", "text": measurments.humidityMain+ "%" });
         return JSON.stringify(result);
     }
 };
