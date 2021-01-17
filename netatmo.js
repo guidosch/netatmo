@@ -39,7 +39,7 @@ function readFromNetatmoAPI() {
                 var value = measure[0].value[0][2];
                 result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
                 result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
-                console.log("Got data from main module");
+                //console.log("Got data from main module");
             } else {
                 console.log("Error reading from main netatmo module: " + JSON.stringify(measure));
             }
@@ -56,7 +56,7 @@ function readFromNetatmoAPI() {
                 result.temperatureRoom = measure[0].value[0][0];
                 result.co2Room = measure[0].value[0][1];
                 result.humidityRoom = measure[0].value[0][2];
-                console.log("Got data from room module");
+                //console.log("Got data from room module");
             } else {
                 console.log("Error reading from room netatmo module: " + JSON.stringify(measure));
             }
@@ -68,13 +68,13 @@ function readFromNetatmoAPI() {
     api.getMeasure(devices.optionsModuleOutside, function (err, measure) {
 
         var debug = JSON.stringify(measure);
-        console.log("Measure object: " + debug);
+        //console.log("Measure object: " + debug);
 
         try {
             if (Array.isArray(measure) && measure.length > 0) {
                 result.temperatureOutside = measure[0].value[0][0];
                 result.humidityOutside = measure[0].value[0][1];
-                console.log("Got data from outdoor module");
+                //console.log("Got data from outdoor module");
             } else {
                 console.log("Error reading from outdoor netatmo module: " + JSON.stringify(measure));
             }
@@ -95,7 +95,7 @@ schedule.scheduleJob("59 * * * * *", function () {
 schedule.scheduleJob("30 * * * * *", function () {
 
     var data = lametricNetatmo.createLametricFormat(result);
-    console.log("netatmo for lametric: " + data);
+    //console.log("netatmo for lametric: " + data);
     lametricNetatmo.optionsLametric.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
     const req = http.request(lametricNetatmo.optionsLametric, (res) => {
         res.setEncoding("utf8");

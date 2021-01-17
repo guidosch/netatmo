@@ -23,10 +23,10 @@ function sendToLametric(data, options) {
     const req = http.request(options, (res) => {
         res.setEncoding("utf8");
         res.on("data", (chunk) => {
-            console.log(`BODY: ${chunk}`);
+            //console.log(`BODY: ${chunk}`);
         });
         res.on("end", () => {
-            console.log("No more data in response.");
+            //console.log("No more data in response.");
         });
     });
 
@@ -44,7 +44,7 @@ function sendToParticle(particleData) {
     particle.login({ username: particle_username, password: particle_password }).then(
         function (data) {
             particle_auth_token = data.body.access_token;
-            console.log("particle event: " + _particleData);
+            //console.log("particle event: " + _particleData);
             var publishEventPr = particle.publishEvent({
                 name: "meteodata", data: _particleData, auth: particle_auth_token
             });
@@ -77,7 +77,7 @@ module.exports = {
         };
 
         http.get(requestOptions, (res) => {
-            console.log(`Got response: ${res.statusCode}`);
+            //console.log(`Got response: ${res.statusCode}`);
 
             if (res.statusCode == 200) {
                 status.apiAvailableStatusAsBoolean = true;
@@ -87,19 +87,19 @@ module.exports = {
             var responseObj;
 
             res.on("data", (data) => {
-                console.log(`Got data: ${data}`);
+                //console.log(`Got data: ${data}`);
                 responseObj = JSON.parse(data);
             });
 
             res.on("end", () => {
-                console.log("response end event...");
+                //console.log("response end event...");
                 if (res.statusCode == 200) {
                     var repsonseDate = moment(responseObj.dateTime);
                     var diff = moment().diff(repsonseDate);
                     if (diff < MAX_DATA_AGE) {
                         status.apiDataUptoDateAsBoolean = true;
                         status.apiDataUptoDate = 1;
-                        console.log("Data is up to date...");
+                        //console.log("Data is up to date...");
                     }
                     status.apiDataAgeInMinutes = Math.round(diff / 1000 / 60);
 
@@ -125,19 +125,19 @@ module.exports = {
         http.get(requestOptions, (res) => {
             var responseObj;
             res.on("data", (data) => {
-                console.log(`Got data: ${data}`);
+                //console.log(`Got data: ${data}`);
                 responseObj = JSON.parse(data);
             });
 
             res.on("end", () => {
                 if (res.statusCode == 200) {
-                    result.model.frames.push({ "icon": "i2355", "text": responseObj.temperature + "°C Out" });
+                    result.model.frames.push({ "icon": "i2355", "text": Number.parseFloat(responseObj.temperatures).toFixed(1) + "°C Out" });
                     var rain = parseFloat(responseObj.precipitation);
                     //todo convert double to light rain, heavy rain...
                     if (rain > 0) {
                         result.model.frames.push({ "icon": "i2416", "text": rain + "mm" });
                     }
-                    result.model.frames.push({ "icon": "i9095", "text": responseObj.windSpeed + "/" + responseObj.gustPeak + "km/h" });
+                    result.model.frames.push({ "icon": "i9095", "text": Number.parseFloat(responseObj.windSpeed).toFixed(1) + "/" + Number.parseFloat(responseObj.gustPeak).toFixed(1) + "km/h" });
                     sendToLametric(JSON.stringify(result), options);
                 }
             });
@@ -162,7 +162,7 @@ module.exports = {
         http.get(requestOptions, (res) => {
             var responseObj;
             res.on("data", (data) => {
-                console.log(`Got data: ${data}`);
+                //console.log(`Got data: ${data}`);
                 responseObj = JSON.parse(data);
             });
 
