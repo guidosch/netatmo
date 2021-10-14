@@ -17,10 +17,14 @@ var api = new netatmo(auth());
 var result = {};
 
 api.on("error", function (error) {
+    result.error = 'Netatmo threw an error: ' + error;
+    result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
     console.error('Netatmo threw an error: ' + error);
 });
 
 api.on("warning", function (error) {
+    result.error = 'Netatmo threw a warning: ' + error;
+    result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
     console.log('Netatmo threw a warning: ' + error);
 });
 
@@ -41,6 +45,7 @@ function readFromNetatmoAPI() {
                 result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
                 //console.log("Got data from main module");
             } else {
+                result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
                 console.log("Error reading from main netatmo module: " + JSON.stringify(measure));
             }
 
@@ -58,6 +63,7 @@ function readFromNetatmoAPI() {
                 result.humidityRoom = measure[0].value[0][2];
                 //console.log("Got data from room module");
             } else {
+                result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
                 console.log("Error reading from room netatmo module: " + JSON.stringify(measure));
             }
 
@@ -76,6 +82,7 @@ function readFromNetatmoAPI() {
                 result.humidityOutside = measure[0].value[0][1];
                 //console.log("Got data from outdoor module");
             } else {
+                result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
                 console.log("Error reading from outdoor netatmo module: " + JSON.stringify(measure));
             }
         } catch (error) {
