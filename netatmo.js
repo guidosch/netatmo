@@ -43,6 +43,7 @@ function readFromNetatmoAPI() {
                 var value = measure[0].value[0][2];
                 result.humidityMain = parseInt(value) - 5; //main humidity is 5% too high
                 result.lastUpdateSecondsAgo = Math.round(Date.now() / 1000) - (measure[0].beg_time);
+                result.error = "";
                 //console.log("Got data from main module");
             } else {
                 result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
