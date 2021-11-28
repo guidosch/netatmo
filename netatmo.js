@@ -129,7 +129,7 @@ schedule.scheduleJob("40 * * * * *", function () {
     apistatus.meteoDataForLametric(lametricNetatmo.optionsLametric);
 });
 
-schedule.scheduleJob("*/5 * * * *", function () {
+schedule.scheduleJob("*/20 * * * *", function () {
     apistatus.meteoDataForParticle();
 });
 
