@@ -4,6 +4,7 @@ var http = require("http");
 var dispatch = require("dispatch");
 var schedule = require("node-schedule");
 var apistatus = require("./meteoDataAPIStatus.js");
+var solaredge = require("./solaredgeToParticle.js");
 var lametricNetatmo = require("./lametricNetatmo.js");
 var devices = require("./devices.js");
 var util = require("./util.js");
@@ -129,8 +130,14 @@ schedule.scheduleJob("40 * * * * *", function () {
     apistatus.meteoDataForLametric(lametricNetatmo.optionsLametric);
 });
 
+//send sma station data to particle devices in office
 schedule.scheduleJob("*/20 * * * *", function () {
     apistatus.meteoDataForParticle();
+});
+
+//send solaredge PV power to particle device in KellerV2.1
+schedule.scheduleJob("*/30 * * * *", function () {
+    solaredge.solarPowerDataForParticle();
 });
 
 //todo get data from raspi, and display in loxone webpage, ev. auch was mit counter und time??? machen wie watchdog oder so
