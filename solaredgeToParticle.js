@@ -48,23 +48,21 @@ function sendToParticle(particleData) {
 
 
 function hasUnusedSolasPower(data) {
-    console.log(JSON.stringify(data));
+    //console.log(JSON.stringify(data));
     let connections = data.siteCurrentPowerFlow.connections;
+    let powerCount = 0;
     if (data.siteCurrentPowerFlow.PV.status.match(/active/i)) {
-        let powerCount = 0;
         connections.forEach(connection => {
             if (connection.from.match(/pv/i) && connection.to.match(/load/i)) {
-                console.log("power count ++");
                 powerCount++;
             }
             if (connection.from.match(/load/i) && connection.to.match(/grid/i)) {
-                console.log("power count ++");
                 powerCount++;
             }
-            if (powerCount == 2) {
-                return true;
-            }
         });
+    }
+    if (powerCount == 2) {
+        return true;
     }
     return false;
 }
