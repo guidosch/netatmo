@@ -1,5 +1,3 @@
-var auth = require("./myNetatmoAuth.js");
-var netatmo = require("netatmo");
 var http = require("http");
 var dispatch = require("dispatch");
 var schedule = require("node-schedule");
@@ -13,22 +11,42 @@ var openweathermap = require("./openweathermap.js");
 
 const PORT = 8000;
 const HEADERS = util.HEADERS;
-var api = new netatmo(auth());
+//var api = new netatmo(auth());
 //result object from netatmo devices and meteo api in one object
 var result = {};
 
+/**
 api.on("error", function (error) {
     result.error = 'Netatmo threw an error: ' + error;
     result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
     console.error('Netatmo threw an error: ' + error);
 });
+ */
 
+/**
 api.on("warning", function (error) {
     result.error = 'Netatmo threw a warning: ' + error;
     result.lastUpdateSecondsAgo = 5000; // > 3600 indicates an alarm to loxone
     console.log('Netatmo threw a warning: ' + error);
 });
+ */
 
+
+
+function readFromNetatmoAPIMock() {
+    result.temperatureMain = 23.2;
+    result.co2Main = 1000;
+    result.humidityMain = 61;
+    result.temperatureRoom = 23.2;
+    result.co2Room = 1200;
+    result.humidityRoom = 61;
+    result.temperatureOutside = 28.7;
+    result.humidityOutside = 61;
+    result.lastUpdateSecondsAgo = 10;
+    result.error = "";
+    console.log(new Date());
+    console.log(JSON.stringify(result));
+}
 
 function readFromNetatmoAPI() {
     api.getMeasure(devices.optionsMainStation, function (err, measure) {
@@ -97,7 +115,7 @@ function readFromNetatmoAPI() {
 }
 
 schedule.scheduleJob("59 * * * * *", function () {
-    readFromNetatmoAPI();
+    readFromNetatmoAPIMock();
 });
 
 //send netatmo data to lametric 
@@ -175,5 +193,7 @@ server.listen(PORT, function () {
 });
 
 //initialize data
-readFromNetatmoAPI();
+//readFromNetatmoAPI();
+
+readFromNetatmoAPIMock();
 

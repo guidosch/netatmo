@@ -1,7 +1,7 @@
 const auth = require("./myNetatmoAuth.js");
-const netatmo = require("netatmo");
+//const netatmo = require("netatmo");
 const devices = require("./devices.js");
-const api = new netatmo(auth());
+//const api = new netatmo(auth());
 /**
  * loxone does not like true/false as http order so converting to 1 / 0 is needed
  * true * 1; // 1
@@ -9,19 +9,20 @@ const api = new netatmo(auth());
  */
 
 const result = {};
-result.mainModuleName = "n/a";
-result.mainOnline = 0;
+result.mainModuleName = "room";
+result.mainOnline = 1;
 
-result.module1 = "n/a";
-result.module1Online = 0;
+result.module1 = "zimmer1";
+result.module1Online = 1;
 
-result.module2 = "n/a";
-result.module2Online = 0;
+result.module2 = "zimmer2";
+result.module2Online = 1;
 
 
 module.exports = {
     checkStationsData: function (response) {
 
+        /**
         api.getStationsData(devices.optionsMainStation, function (err, stationsData) {
             const mainModuleName = stationsData[0].module_name;
             result.mainModuleName = mainModuleName;
@@ -39,6 +40,8 @@ module.exports = {
             //console.log(JSON.stringify(result));
             response.end(JSON.stringify(result));
         });
+         */
+        response.end(JSON.stringify(result));
     }
 };
 

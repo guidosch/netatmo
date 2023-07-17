@@ -23,9 +23,8 @@
   "dependencies": {
     "dispatch": "^1.0.0",
     "moment": "^2.11.1",
-    "netatmo": "^2.3.0",
     "node-schedule": "^1.2.5",
-    "particle-api-js": "^8.3.0"
+    "particle-api-js": "^8.3.0",
   },
   "devDependencies": {
     "chai": "^4.2.0",
