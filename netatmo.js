@@ -34,10 +34,10 @@ api.on("warning", function (error) {
 
 
 function readFromNetatmoAPIMock() {
-    result.temperatureMain = 23.2;
+    result.temperatureMain = 24.2;
     result.co2Main = 1000;
     result.humidityMain = 61;
-    result.temperatureRoom = 23.2;
+    result.temperatureRoom = 24.2;
     result.co2Room = 1200;
     result.humidityRoom = 61;
     result.temperatureOutside = 28.7;
